@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BooksModule } from './books/books.module';
-import { Book } from './books/book.entity'; // Importe a Entidade
+import { Book } from './books/book.entity';
 
 @Module({
   imports: [
@@ -12,8 +12,8 @@ import { Book } from './books/book.entity'; // Importe a Entidade
       username: process.env.DATABASE_USER || 'user',
       password: process.env.DATABASE_PASSWORD || 'password',
       database: process.env.DATABASE_NAME || 'bookdb',
-      entities: [Book], // Adicione a Entidade Book
-      synchronize: true, // Apenas para desenvolvimento; deve ser 'false' em produção
+      entities: [Book],
+      synchronize: true,
       autoLoadEntities: true,
     }),
     BooksModule,

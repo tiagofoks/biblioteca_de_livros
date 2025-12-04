@@ -20,7 +20,6 @@ export class Book {
   @Column({ type: 'int' })
   publication_year: number;
 
-  // Campo para exclusão lógica (Soft Delete)
   @Column({ type: 'boolean', default: false, name: 'is_deleted' })
   isDeleted: boolean;
 }

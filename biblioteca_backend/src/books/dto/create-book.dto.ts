@@ -22,12 +22,11 @@ export class CreateBookDto {
 
   @IsNotEmpty({ message: 'O ISBN é obrigatório.' })
   @IsString()
-  // Adicionar aqui uma validação de formato para ISBN, se necessário
   isbn: string;
 
   @IsNotEmpty({ message: 'O ano de publicação é obrigatório.' })
   @IsInt()
   @Min(1000)
-  @Max(new Date().getFullYear()) // Ano não pode ser futuro
+  @Max(new Date().getFullYear())
   publication_year: number;
 }
