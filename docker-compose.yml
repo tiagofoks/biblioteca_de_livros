@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # 1. Serviço do Banco de Dados PostgreSQL (SEM ALTERAÇÃO)
+  db:
+    # ... (configuração existente)
+    image: postgres:14-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: bookdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Serviço do Back-end (NestJS) (SEM ALTERAÇÃO)
+  backend:
+    # ... (configuração existente)
+    build:
+      context: ./biblioteca_backend 
+      dockerfile: Dockerfile
+    container_name: biblioteca_backend
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_HOST: db 
+      DATABASE_PORT: 5432
+      DATABASE_USER: user
+      DATABASE_PASSWORD: password
+      DATABASE_NAME: bookdb
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # 3. NOVO SERVIÇO: Front-end (Next.js)
+  frontend:
+    build:
+      context: ./biblioteca_frontend # Caminho para a nova pasta
+      dockerfile: Dockerfile
+    container_name: biblioteca_frontend
+    restart: always
+    ports:
+      - "3000:3000" # Mapeia a porta 3000 para a aplicação
+    environment:
+      # URL da API: 'backend' é o nome do serviço no Docker Compose, e 3001 é a porta interna
+      NEXT_PUBLIC_API_URL: http://backend:3001
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
